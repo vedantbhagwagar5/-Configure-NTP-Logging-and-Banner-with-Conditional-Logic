@@ -1,0 +1,33 @@
+---
+- name: Configure NTP, Logging, Banner, and Timezone
+  hosts: all
+  gather_facts: no
+  tasks:
+
+    - name: Configure NTP
+      ios_config:
+        lines:
+          - ntp server 216.239.35.0
+
+    - name: Configure logging
+      ios_config:
+        lines:
+          - logging buffered 16384
+          - logging console warnings
+
+    - name: Configure timezone
+      ios_config:
+        lines:
+          - clock timezone CST -6
+
+    - name: Configure banner for CORE router
+      ios_config:
+        lines:
+          - banner login "*** CORE ROUTER - Authorized Access Only ***"
+      when: "'core' in group_names"
+
+    - name: Configure banner for DISTRIBUTION router
+      ios_config:
+        lines:
+          - banner login "*** DISTRIBUTION ROUTER - Authorized Access Only ***"
+      when: "'distribution' in group_names"
